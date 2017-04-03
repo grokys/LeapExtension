@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -8,19 +7,32 @@ namespace LeapExtension
 {
     class LeapCaret
     {
-        LeapsClient client;
-        IWpfTextView textView;
-        IAdornmentLayer adornmentLayer;
+        readonly IWpfTextView textView;
+        readonly IAdornmentLayer adornmentLayer;
         LeapCaretControl caretControl;
+        int position;
 
-        public LeapCaret(LeapsClient client, IWpfTextView textView)
+        public LeapCaret(IWpfTextView textView)
         {
             this.textView = textView;
             adornmentLayer = textView.GetAdornmentLayer("LeapExtension");
-            textView.LayoutChanged += LayoutChanged;
+            textView.LayoutChanged += (s, e) => Update();
         }
 
-        private void LayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
+        public int Position
+        {
+            get { return position; }
+            set
+            {
+                if (position != value)
+                {
+                    position = value;
+                    Update();
+                }
+            }
+        }
+
+        void Update()
         {
             if (caretControl == null)
             {
@@ -31,13 +43,15 @@ namespace LeapExtension
                 adornmentLayer.RemoveAdornment(caretControl);
             }
 
-            var span = new SnapshotSpan(textView.TextSnapshot, new Span(17, 1));
-            var marker = textView.TextViewLines.GetMarkerGeometry(span);
+            var pos = Math.Min(position, textView.TextSnapshot.Length - 1);
+            var span = new SnapshotSpan(textView.TextSnapshot, new Span(pos, 1));
+            var marker = textView.TextViewLines.GetLineMarkerGeometry(span);
 
             if (marker != null)
             {
-                Canvas.SetLeft(caretControl, marker.Bounds.Left);
-                Canvas.SetTop(caretControl, marker.Bounds.Top);
+                var point = pos == position ? marker.Bounds.TopLeft : marker.Bounds.TopRight;
+                Canvas.SetLeft(caretControl, point.X);
+                Canvas.SetTop(caretControl, point.Y);
                 caretControl.Height = marker.Bounds.Height;
 
                 adornmentLayer.AddAdornment(

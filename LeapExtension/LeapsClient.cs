@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Reactive;
 using System.Reactive.Subjects;
-using System.Threading;
 using LeapExtension.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,6 +14,7 @@ namespace LeapExtension
         readonly WebSocket socket;
         readonly Subject<Unit> connected = new Subject<Unit>();
         readonly Subject<LeapDocumentModel> documentReceived = new Subject<LeapDocumentModel>();
+        readonly Subject<UserUpdateModel[]> updatesReceived = new Subject<UserUpdateModel[]>();
 
         public LeapsClient(Uri address)
         {
@@ -25,6 +24,7 @@ namespace LeapExtension
 
         public IObservable<Unit> Connected => connected;
         public IObservable<LeapDocumentModel> DocumentReceived => documentReceived;
+        public IObservable<UserUpdateModel[]> UpdatesReceived => updatesReceived;
 
         public void Connect()
         {
@@ -37,7 +37,7 @@ namespace LeapExtension
         {
             var command = new EditCommandModel
             {
-                UserId = "anon",
+                UserId = "vs",
                 Token = "",
                 DocumentId = documentId,
             };
@@ -54,6 +54,12 @@ namespace LeapExtension
                 case "document":
                     var document = JsonConvert.DeserializeObject<DocumentResponseModel>(e.Message);
                     documentReceived.OnNext(document.LeapDocument);
+                    break;
+                case "update":
+                    var update = JsonConvert.DeserializeObject<UpdateResponseModel>(e.Message);
+                    updatesReceived.OnNext(update.UserUpdates);
+                    break;
+                default:
                     break;
             }
         }

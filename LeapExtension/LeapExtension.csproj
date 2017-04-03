@@ -52,10 +52,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="LeapsDocument.cs" />
+    <Compile Include="Models\ClientModel.cs" />
     <Compile Include="Models\CommandModel.cs" />
     <Compile Include="Models\EditCommandModel.cs" />
     <Compile Include="Models\DocumentResponseModel.cs" />
     <Compile Include="Models\LeapDocumentModel.cs" />
+    <Compile Include="Models\ResponseModel.cs" />
+    <Compile Include="Models\UpdateMessageModel.cs" />
+    <Compile Include="Models\UpdateResponseModel.cs" />
+    <Compile Include="Models\UserUpdateModel.cs" />
     <Compile Include="TextViewCreationListener.cs" />
     <Compile Include="LeapCaret.cs" />
     <Compile Include="LeapCaretControl.xaml.cs">
