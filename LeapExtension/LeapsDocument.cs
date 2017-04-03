@@ -29,7 +29,7 @@ namespace LeapExtension
 
         void ClientConnected(Unit unit)
         {
-            client.Edit("anon", documentId);
+            client.JoinDocument("vs", documentId);
         }
 
         void ClientDocumentReceived(LeapDocumentModel document)
@@ -42,6 +42,9 @@ namespace LeapExtension
                     edit.Apply();
                 }
             }
+
+            client.UpdateCursor(textView.Caret.Position.BufferPosition.Position);
+            textView.Caret.PositionChanged += CaretPositionChanged;
         }
 
         void ClientUpdatesReceived(UserUpdateModel[] updates)
@@ -50,12 +53,12 @@ namespace LeapExtension
             {
                 if (update.Message.Position.HasValue)
                 {
-                    UpdateCaret(update.Client.UserId, update.Message.Position.Value);
+                    UpdateRemoteCaret(update.Client.UserId, update.Message.Position.Value);
                 }
             }
         }
 
-        private void UpdateCaret(string userId, int position)
+        void UpdateRemoteCaret(string userId, int position)
         {
             LeapCaret caret;
 
@@ -66,6 +69,11 @@ namespace LeapExtension
             }
 
             caret.Position = position;
+        }
+
+        void CaretPositionChanged(object sender, CaretPositionChangedEventArgs e)
+        {
+            client.UpdateCursor(e.NewPosition.BufferPosition.Position);
         }
     }
 }

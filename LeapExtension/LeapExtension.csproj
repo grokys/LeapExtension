@@ -58,6 +58,7 @@
     <Compile Include="Models\DocumentResponseModel.cs" />
     <Compile Include="Models\LeapDocumentModel.cs" />
     <Compile Include="Models\ResponseModel.cs" />
+    <Compile Include="Models\UpdateCommandModel.cs" />
     <Compile Include="Models\UpdateMessageModel.cs" />
     <Compile Include="Models\UpdateResponseModel.cs" />
     <Compile Include="Models\UserUpdateModel.cs" />

@@ -20,6 +20,8 @@ namespace LeapExtension
         {
             this.address = address;
             socket = new WebSocket4Net.WebSocket(address.ToString());
+            socket.Opened += Socket_Opened;
+            socket.MessageReceived += Socket_MessageReceived;
         }
 
         public IObservable<Unit> Connected => connected;
@@ -29,17 +31,25 @@ namespace LeapExtension
         public void Connect()
         {
             socket.Open();
-            socket.Opened += Socket_Opened;
-            socket.MessageReceived += Socket_MessageReceived;
         }
 
-        public void Edit(string userId, string documentId)
+        public void JoinDocument(string userId, string documentId)
         {
             var command = new EditCommandModel
             {
                 UserId = "vs",
                 Token = "",
                 DocumentId = documentId,
+            };
+
+            socket.Send(JsonConvert.SerializeObject(command));
+        }
+
+        public void UpdateCursor(int position)
+        {
+            var command = new UpdateCommandModel
+            {
+                Position = position,
             };
 
             socket.Send(JsonConvert.SerializeObject(command));
