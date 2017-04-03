@@ -65,6 +65,7 @@ namespace LeapExtension
             if (!carets.TryGetValue(userId, out caret))
             {
                 caret = new LeapCaret(textView);
+                caret.User = userId;
                 carets.Add(userId, caret);
             }
 

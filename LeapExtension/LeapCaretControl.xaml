@@ -15,8 +15,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Ellipse Width="7" Height="7" Stroke="Red"/>
+        <Ellipse Width="7" Height="7" Fill="Red"/>
         <Rectangle Grid.Row="1" Margin="0 -1 0 0" Width="1" Stroke="Red" VerticalAlignment="Stretch"/>
-        <TextBlock Grid.Column="1" Grid.RowSpan="2" Margin="3 -6 0 0" Foreground="Red">Anon</TextBlock>
+        <TextBlock Grid.Column="1" Grid.RowSpan="2" Margin="3 -6 0 0" Foreground="Red" Text="{Binding User}"/>
     </Grid>
 </UserControl>

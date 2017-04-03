@@ -1,16 +1,18 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace LeapExtension
 {
-    class LeapCaret
+    class LeapCaret : INotifyPropertyChanged
     {
         readonly IWpfTextView textView;
         readonly IAdornmentLayer adornmentLayer;
         LeapCaretControl caretControl;
         int position;
+        string user;
 
         public LeapCaret(IWpfTextView textView)
         {
@@ -32,11 +34,27 @@ namespace LeapExtension
             }
         }
 
+        public string User
+        {
+            get { return user; }
+            set
+            {
+                if (user != value)
+                {
+                    user = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(User)));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         void Update()
         {
             if (caretControl == null)
             {
                 caretControl = new LeapCaretControl();
+                caretControl.DataContext = this;
             }
             else
             {
