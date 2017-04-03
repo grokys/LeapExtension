@@ -54,6 +54,8 @@
     <Compile Include="LeapsDocument.cs" />
     <Compile Include="Models\ClientModel.cs" />
     <Compile Include="Models\CommandModel.cs" />
+    <Compile Include="Models\TransformModel.cs" />
+    <Compile Include="Models\TransformsResponseModel.cs" />
     <Compile Include="Models\EditCommandModel.cs" />
     <Compile Include="Models\DocumentResponseModel.cs" />
     <Compile Include="Models\LeapDocumentModel.cs" />

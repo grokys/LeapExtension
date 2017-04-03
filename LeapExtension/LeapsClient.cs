@@ -14,6 +14,7 @@ namespace LeapExtension
         readonly WebSocket socket;
         readonly Subject<Unit> connected = new Subject<Unit>();
         readonly Subject<LeapDocumentModel> documentReceived = new Subject<LeapDocumentModel>();
+        readonly Subject<TransformModel[]> transformsReceived = new Subject<TransformModel[]>();
         readonly Subject<UserUpdateModel[]> updatesReceived = new Subject<UserUpdateModel[]>();
 
         public LeapsClient(Uri address)
@@ -26,6 +27,7 @@ namespace LeapExtension
 
         public IObservable<Unit> Connected => connected;
         public IObservable<LeapDocumentModel> DocumentReceived => documentReceived;
+        public IObservable<TransformModel[]> TransformsReceived => transformsReceived;
         public IObservable<UserUpdateModel[]> UpdatesReceived => updatesReceived;
 
         public void Connect()
@@ -64,6 +66,10 @@ namespace LeapExtension
                 case "document":
                     var document = JsonConvert.DeserializeObject<DocumentResponseModel>(e.Message);
                     documentReceived.OnNext(document.LeapDocument);
+                    break;
+                case "transforms":
+                    var transforms = JsonConvert.DeserializeObject<TransformsResponseModel>(e.Message);
+                    transformsReceived.OnNext(transforms.Transforms);
                     break;
                 case "update":
                     var update = JsonConvert.DeserializeObject<UpdateResponseModel>(e.Message);

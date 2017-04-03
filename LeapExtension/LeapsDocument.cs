@@ -23,8 +23,18 @@ namespace LeapExtension
 
             client.Connected.Subscribe(ClientConnected);
             client.DocumentReceived.ObserveOn(RxApp.MainThreadScheduler).Subscribe(ClientDocumentReceived);
+            client.TransformsReceived.ObserveOn(RxApp.MainThreadScheduler).Subscribe(ClientTransformsReceived);
             client.UpdatesReceived.ObserveOn(RxApp.MainThreadScheduler).Subscribe(ClientUpdatesReceived);
             client.Connect();
+        }
+
+        void ApplyTransform(TransformModel transform)
+        {
+            using (var edit = textView.TextBuffer.CreateEdit())
+            {
+                edit.Replace(transform.Position, Math.Max(0, transform.NumDelete), transform.Insert ?? string.Empty);
+                edit.Apply();
+            }
         }
 
         void ClientConnected(Unit unit)
@@ -45,6 +55,14 @@ namespace LeapExtension
 
             client.UpdateCursor(textView.Caret.Position.BufferPosition.Position);
             textView.Caret.PositionChanged += CaretPositionChanged;
+        }
+
+        void ClientTransformsReceived(TransformModel[] transforms)
+        {
+            foreach (var transform in transforms)
+            {
+                ApplyTransform(transform);
+            }
         }
 
         void ClientUpdatesReceived(UserUpdateModel[] updates)
