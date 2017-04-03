@@ -8,11 +8,12 @@ namespace LeapExtension
 {
     class LeapCaret
     {
+        LeapsClient client;
         IWpfTextView textView;
         IAdornmentLayer adornmentLayer;
         LeapCaretControl caretControl;
 
-        public LeapCaret(IWpfTextView textView)
+        public LeapCaret(LeapsClient client, IWpfTextView textView)
         {
             this.textView = textView;
             adornmentLayer = textView.GetAdornmentLayer("LeapExtension");
