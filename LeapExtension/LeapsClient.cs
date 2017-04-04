@@ -16,6 +16,7 @@ namespace LeapExtension
         readonly Subject<LeapDocumentModel> documentReceived = new Subject<LeapDocumentModel>();
         readonly Subject<TransformModel[]> transformsReceived = new Subject<TransformModel[]>();
         readonly Subject<UserUpdateModel[]> updatesReceived = new Subject<UserUpdateModel[]>();
+        int version;
 
         public LeapsClient(Uri address)
         {
@@ -47,6 +48,22 @@ namespace LeapExtension
             socket.Send(JsonConvert.SerializeObject(command));
         }
 
+        public void SendTransform(int position, int numDelete, string insert)
+        {
+            var command = new SubmitCommandModel
+            {
+                Transform = new TransformModel
+                {
+                    Position = position,
+                    NumDelete = numDelete,
+                    Insert = insert,
+                    Version = ++version,
+                }
+            };
+
+            socket.Send(JsonConvert.SerializeObject(command));
+        }
+
         public void UpdateCursor(int position)
         {
             var command = new UpdateCommandModel
@@ -65,6 +82,7 @@ namespace LeapExtension
             {
                 case "document":
                     var document = JsonConvert.DeserializeObject<DocumentResponseModel>(e.Message);
+                    version = document.Version;
                     documentReceived.OnNext(document.LeapDocument);
                     break;
                 case "transforms":

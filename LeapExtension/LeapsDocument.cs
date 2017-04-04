@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
 using LeapExtension.Models;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using ReactiveUI;
 
@@ -54,6 +55,7 @@ namespace LeapExtension
             }
 
             client.UpdateCursor(textView.Caret.Position.BufferPosition.Position);
+            textView.TextBuffer.Changed += TextBufferChanged;
             textView.Caret.PositionChanged += CaretPositionChanged;
         }
 
@@ -93,6 +95,19 @@ namespace LeapExtension
         void CaretPositionChanged(object sender, CaretPositionChangedEventArgs e)
         {
             client.UpdateCursor(e.NewPosition.BufferPosition.Position);
+        }
+
+        void TextBufferChanged(object sender, TextContentChangedEventArgs e)
+        {
+            var caretPosition = textView.Caret.Position.BufferPosition.Position;
+
+            foreach (var change in e.Changes)
+            {
+                client.SendTransform(change.OldPosition, change.OldText.Length, change.NewText);
+                caretPosition = change.OldPosition + change.NewLength;
+            }
+
+            client.UpdateCursor(caretPosition);
         }
     }
 }
