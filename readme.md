@@ -1,6 +1,6 @@
 # Visual Studio Leaps Client
 
-Spike of a [Leaps](https://github.com/Jeffail/leaps) client for Visual Studio. 
+Spike of a [Leaps](https://github.com/Jeffail/leaps) client for Visual Studio 2015. 
 
 ## Trying it out
 
